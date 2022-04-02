@@ -18,8 +18,8 @@ CRGB leds[ NUM_LEDS ];
 #define CHIPSET     NEOPIXEL
 
 /**
-   Maps out the XY coordinates to the proper LED.
-*/
+ *   Maps out the XY coordinates to the proper LED.
+ */
 uint16_t XY (uint16_t x, uint16_t y) {
   // any out of bounds address maps to the first hidden pixel
   if ( (x >= MATRIX_WIDTH) || (y >= MATRIX_HEIGHT) ) {
@@ -60,6 +60,7 @@ uint16_t XY (uint16_t x, uint16_t y) {
 }
 
 #include "Fire.h"
+#include "rainbowLines.h"
 
 void setup() {
   FastLED.addLeds<CHIPSET, LED_PIN>(leds, NUM_LEDS).setCorrection(TypicalSMD5050);
@@ -70,47 +71,36 @@ unsigned long startTime = 0;
 
 void loop()
 {
-    unsigned long loopTime;
-
-    while ((loopTime = millis() - startTime) < 10000) {
-      int32_t yHueDelta32 = ((int32_t)cos16( loopTime * (27/1) ) * (350 / MATRIX_WIDTH));
-      int32_t xHueDelta32 = ((int32_t)cos16( loopTime * (39/1) ) * (310 / MATRIX_HEIGHT));
-      DrawOneFrame( loopTime / 65536, yHueDelta32 / 32768, xHueDelta32 / 32768);
-      if( loopTime < 5000 ) {
-        FastLED.setBrightness( scale8( BRIGHTNESS, (loopTime * 256) / 5000));
-      }
-      else {
-        FastLED.setBrightness(BRIGHTNESS);
-      }
-      FastLED.show();
+    rainbowLines rainbow = rainbowLines();
+    while (loopTime() < 10000) {
+      rainbow.runPattern(loopTime());
     }
 
     Fire fire = Fire();
-    while ((loopTime = millis() - startTime) < 20000) {
+    while (loopTime() < 20000) {
       fire.runPattern();
     }
 
-    startTime = millis();
+    setStartTime();
 }
-
-void DrawOneFrame( uint8_t startHue8, int8_t yHueDelta8, int8_t xHueDelta8)
-{
-  uint8_t lineStartHue = startHue8;
-  for( uint8_t y = 0; y < MATRIX_HEIGHT; y++) {
-    lineStartHue += yHueDelta8;
-    uint8_t pixelHue = lineStartHue;      
-    for( uint8_t x = 0; x < MATRIX_WIDTH; x++) {
-      pixelHue += xHueDelta8;
-      leds[ XY(x, y)]  = CHSV ( pixelHue, 255, 255);
-    }
-  }
-}
-
-
 
 /**
-   Sets all LEDs in the mask to a colour.
-*/
+ * Track where we are in the loop.
+ */
+uint16_t loopTime() {
+  return millis() - startTime;
+}
+
+/**
+ * Reset timer for next loop.
+ */
+void setStartTime() {
+  startTime = millis();
+}
+
+/**
+ * Sets all LEDs in the mask to a colour.
+ */
 void full_mask (int color) {
   uint16_t i, j;
 
