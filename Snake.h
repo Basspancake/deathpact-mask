@@ -18,7 +18,7 @@ class Snake {
     };
     const static uint8_t interval = 16;     // ms per frame [30]
     const static uint8_t numSnakes = 10;    // number of snakes to draw [10]
-    const static uint8_t fadeRate = 10;     // How quickly to fade the trails (higher = faster fade) [20]
+    const static uint8_t fadeRate = 20;     // How quickly to fade the trails (higher = faster fade) [20]
     const static uint8_t blendRate = 24;    // How quickly to blend between palettes (higher = slower blend) [24]
     const static uint8_t paletteTime = 5;   // Num seconds to show one palette [5]
     Snakes snakes[numSnakes];

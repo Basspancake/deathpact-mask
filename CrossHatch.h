@@ -15,7 +15,7 @@ class CrossHatch {
     };
     Blobs blob[20];
     uint8_t blobCounter = 0;
-    const uint8_t blobRate = 5;     // Higher number is fewer blobs
+    const uint8_t blobRate = 10;     // Higher number is fewer blobs
     long previousTime = 0;
 };
 

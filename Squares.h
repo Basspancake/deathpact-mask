@@ -14,9 +14,9 @@ class Squares {
 };
 
 bool Squares::runPattern() {
-  EVERY_N_MILLISECONDS(100) {
+  EVERY_N_MILLISECONDS(75) {
     FastLED.clear();
-    _pattern = (_pattern + 1) %2;
+    _pattern = (_pattern + 1) % 2;
     drawPattern(_pattern);
     FastLED.show();
   }
@@ -26,13 +26,13 @@ bool Squares::runPattern() {
 void Squares::drawPattern(uint8_t pattern) {
   switch (pattern){
     case 0:
-      for (int i = 0; i < 6; i +=2) {
+      for (int i = 0; i < 12; i +=3) {
         drawRectangle(i, i, kMatrixWidth -1 - i, kMatrixHeight - 1 - i, CRGB(255,255,255));
       }
       break;
 
     case 1:
-      for (int i = 1; i < 6; i +=2) {
+      for (int i = 1; i < 12; i +=3) {
         drawRectangle(i, i, kMatrixWidth -1 - i, kMatrixHeight - 1 - i, CRGB(255,255,255));
       }
       break; 

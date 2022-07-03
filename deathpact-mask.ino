@@ -5,6 +5,7 @@
 // Params for MATRIX_MATRIX_WIDTH and height
 #define kMatrixWidth 25
 #define kMatrixHeight 25
+#define MAX_DIMENSION ((kMatrixWidth>kMatrixHeight) ? kMatrixWidth : kMatrixHeight)
 
 #define NUM_LEDS (kMatrixWidth * kMatrixHeight)
 CRGB leds[ NUM_LEDS ];
@@ -62,7 +63,7 @@ uint16_t XY (uint16_t x, uint16_t y) {
 #include "Fire.h"
 #include "Circles.h"
 #include "Rainbow.h"
-#include "Crosshatch.h"
+#include "CrossHatch.h"
 #include "Drops.h"
 #include "Matrix.h"
 #include "Noise.h"
@@ -73,6 +74,7 @@ uint16_t XY (uint16_t x, uint16_t y) {
 void setup() {
   FastLED.addLeds<CHIPSET, LED_PIN>(leds, NUM_LEDS).setCorrection(TypicalSMD5050);
   FastLED.setBrightness( BRIGHTNESS );
+  randomSeed(analogRead(A0));
 }
 
 unsigned long startTime = 0;
@@ -80,120 +82,119 @@ unsigned long startTime = 0;
 // Functions to run patterns. Done this way so each class stays in scope only while
 // it is active, freeing up RAM once it is changed.
 void runRainbow(){
-  bool isRunning = true;
   Rainbow rainbow = Rainbow();
-  while(isRunning) isRunning = rainbow.runPattern();
+  rainbow.runPattern();
 }
 
 void runFire(){
-  bool isRunning = true;
   Fire fire = Fire();
-  while(isRunning) isRunning = fire.runPattern();
+  while (loopTime() < 10000) {
+    fire.runPattern();
+  }
 }
 
 void runSquares(){
-  bool isRunning = true;
   Squares squares = Squares();
-  while(isRunning) isRunning = squares.runPattern();
+  while (loopTime() < 10000) {
+    squares.runPattern();
+  }
 }
 
 void runCircles(){
-  bool isRunning = true;
   Circles circles = Circles();
-  while(isRunning) isRunning = circles.runPattern();
+  while (loopTime() < 10000) {
+    circles.runPattern();
+  }
 }
 
 void runPlasma(){
-  bool isRunning = true;
   Plasma plasma = Plasma();
-  while(isRunning) isRunning = plasma.runPattern();
+  while (loopTime() < 10000) {
+    plasma.runPattern();
+  }
 }
 
 void runMatrix(){
-  bool isRunning = true;
   Matrix matrix = Matrix();
-  while(isRunning) isRunning = matrix.runPattern();
+  while (loopTime() < 10000) {
+    matrix.runPattern();
+  }
 }
 
 void runCrossHatch(){
-  bool isRunning = true;
   CrossHatch crossHatch = CrossHatch();
-  while(isRunning) isRunning = crossHatch.runPattern();
+  while (loopTime() < 10000) {
+    crossHatch.runPattern();
+  }
 }
 
 void runDrops(){
-  bool isRunning = true;
   Drops drops = Drops();
-  while(isRunning) isRunning = drops.runPattern();
+  while (loopTime() < 10000) {
+    drops.runPattern();
+  }
 }
 
 void runNoise(){
-  bool isRunning = true;
   Noise noise = Noise();
-  while(isRunning) {
-    isRunning = noise.runPattern();
+  while (loopTime() < 10000) {
+    noise.runPattern();
   }
 }
 
 void runSnake(){
-  bool isRunning = true;
   Snake snake = Snake();
-  while(isRunning) {
-    isRunning = snake.runPattern();
+  while (loopTime() < 10000) {
+    snake.runPattern();
   }
 }
 
 void loop()
 {
-  switch ((int)random(0,9)) {
-    case 0:
-      while (loopTime() < 10000) {
-        runRainbow();
-      }
-      break;
+  int random_int = random(1,13);
+  if (random_int > 11) {
+    random_int = 11;
+  }
+  switch (random_int) {
     case 1:
-      while (loopTime() < 10000) {
-        runFire();
-      }
+       runRainbow();
       break;
     case 2:
-      while (loopTime() < 10000) {
-        runSquares();
-      }
+       runFire();
       break;
     case 3:
-      while (loopTime() < 10000) {
-        runCircles();
-      }
+      runSquares();
       break;
     case 4:
-      while (loopTime() < 10000) {
-        runPlasma();
-      }
+      runCircles();
       break;
     case 5:
-      while (loopTime() < 10000) {
-        runMatrix();
-      }
+      runPlasma();
       break;
     case 6:
-      while (loopTime() < 10000) {
-        runCrossHatch();
-      }
+      FastLED.clear();
+      runMatrix();
       break;
     case 7:
-      while (loopTime() < 10000) {
-        runDrops();
-      }
+      runCrossHatch();
       break;
     case 8:
-      while (loopTime() < 10000) {
-        runNoise();
-      }
+      runDrops();
       break;
     case 9:
+      runNoise();
+      break;
+    case 10:
+      runSnake();
+      break;
+    case 11:
       while (loopTime() < 10000) {
-        runSnake();
+        if ((loopTime() / 50) % 2 == 1) {
+          full_mask(CRGB::Black);
+        }
+        else {
+          full_mask(CRGB::Red);
+        }
       }
       break;
   }
@@ -218,7 +219,7 @@ void setStartTime() {
 /**
  * Sets all LEDs in the mask to a colour.
  */
-void full_mask (int color) {
+void full_mask (CRGB color) {
   uint16_t i, j;
 
   for (i = 0; i <= kMatrixWidth; i++) {
@@ -226,4 +227,5 @@ void full_mask (int color) {
       leds[XY(i, j)] = color;
     }
   }
+  FastLED.show();
 }
