@@ -27,16 +27,16 @@ class Fire {
 
 Fire::Fire() {
   // Set bottom row to highest index in palette (white)
-  setBottomRow(MATRIX_HEIGHT);
+  setBottomRow(kMatrixHeight);
 }
 
 bool Fire::runPattern() {
   doFire();
-  for (int y = 0; y < MATRIX_HEIGHT; y++){ 
-    for (int x = 0; x < MATRIX_WIDTH; x++) {
-      int index = firePixels[MATRIX_WIDTH * y + x];
-      // Index goes from 0 -> MATRIX_HEIGHT, palette goes from 0 -> 255 so need to scale it
-      uint8_t indexScale = 255 / MATRIX_HEIGHT;
+  for (int y = 0; y < kMatrixHeight; y++){ 
+    for (int x = 0; x < kMatrixWidth; x++) {
+      int index = firePixels[kMatrixWidth * y + x];
+      // Index goes from 0 -> kMatrixHeight, palette goes from 0 -> 255 so need to scale it
+      uint8_t indexScale = 255 / kMatrixHeight;
       leds[XY(x,y)] = ColorFromPalette(_currentPalette, constrain(index * indexScale, 0, 255), 255, LINEARBLEND);
     }
   }
@@ -46,26 +46,26 @@ bool Fire::runPattern() {
 }
 
 void Fire::doFire() {
-  for(uint16_t x = 0 ; x < MATRIX_WIDTH; x++) {
-    for (uint16_t y = 1; y < MATRIX_HEIGHT; y++) {
-      spreadFire(y * MATRIX_WIDTH + x);
+  for(uint16_t x = 0 ; x < kMatrixWidth; x++) {
+    for (uint16_t y = 1; y < kMatrixHeight; y++) {
+      spreadFire(y * kMatrixWidth + x);
     }
   }
 }
 
 void Fire::spreadFire(uint16_t src) {
   if(firePixels[src] == 0) {
-    firePixels[src - MATRIX_WIDTH] = 0;
+    firePixels[src - kMatrixWidth] = 0;
   } else {
     // Commented lines moves fire sideways as well as up, but doesn't look good on low res matrix:
     // int16_t dst = src - rand + 1;
-    // firePixels[dst - MATRIX_WIDTH] = firePixels[src] - random8(1);
-    firePixels[src - MATRIX_WIDTH] = firePixels[src] - random8(3);
+    // firePixels[dst - kMatrixWidth] = firePixels[src] - random8(1);
+    firePixels[src - kMatrixWidth] = firePixels[src] - random8(3);
   }
 }
 
 void Fire::setBottomRow(uint16_t col) {
-  for (uint16_t i = 0; i < MATRIX_WIDTH; i++) {
-    firePixels[(MATRIX_HEIGHT - 1) * MATRIX_WIDTH + i] = col;
+  for (uint16_t i = 0; i < kMatrixWidth; i++) {
+    firePixels[(kMatrixHeight - 1) * kMatrixWidth + i] = col;
   }
 }
